@@ -1,7 +1,7 @@
 from pymongo import MongoClient
-from app.config import DATABASE_URL
-from app.models.book import Book
 from bson import ObjectId
+from config import DATABASE_URL
+from models.book import Book
 
 #connect
 client = MongoClient(DATABASE_URL)

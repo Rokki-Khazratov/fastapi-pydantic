@@ -1,11 +1,7 @@
 from fastapi import FastAPI
+from routes import books  
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(books.router, prefix="/books", tags=["books"])
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, query_param: str = None):
-    return {"item_id": item_id, "query_param": query_param}
