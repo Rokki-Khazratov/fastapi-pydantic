@@ -1,39 +1,36 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from pymongo import MongoClient
+from bson import ObjectId
+from config import DATABASE_URL
 
-Base = declarative_base()
 
-#Genres
-class Genre(Base):
-    __tablename__ = 'genres'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
+client = MongoClient(DATABASE_URL)
+db = client.get_database()
 
-class Subgenre(Base):
-    __tablename__ = 'subgenres'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
-    parent_genre_id = Column(Integer, ForeignKey('genres.id'))
-    parent_genre = relationship('Genre', back_populates='subgenres')
+books_collection = db["books"]
+authors_collection = db["authors"]
+genres_collection = db["genres"]
+subgenres_collection = db["subgenres"]
 
-#Books
-class Book(Base):
-    __tablename__ = 'books'
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    author = Column(String)
-    subgenre_id = Column(Integer, ForeignKey('subgenres.id'))
-    subgenre = relationship('Subgenre', back_populates='books')
-    year = Column(Integer)
+class Genre:
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
 
-#Authors
-class Author(Base):
-    __tablename__ = 'authors'
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    birth_year = Column(Integer)
-    nationality = Column(String)
-    books = relationship('Book', back_populates='author')
+class Subgenre:
+    def __init__(self, name, description, parent_genre_id):
+        self.name = name
+        self.description = description
+        self.parent_genre_id = parent_genre_id
+
+class Book:
+    def __init__(self, title, author_id, subgenre_id, year):
+        self.title = title
+        self.author_id = author_id
+        self.subgenre_id = subgenre_id
+        self.year = year
+
+class Author:
+    def __init__(self, name, birth_year, nationality):
+        self.name = name
+        self.birth_year = birth_year
+        self.nationality = nationality
