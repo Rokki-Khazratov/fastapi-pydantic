@@ -1,36 +1,44 @@
 from pymongo import MongoClient
+from pydantic import BaseModel
 from bson import ObjectId
-from config import DATABASE_URL
+from typing import Optional
+from config import DATABASE_TOKEN
 
 
-client = MongoClient(DATABASE_URL)
-db = client.get_database()
+# client = MongoClient(DATABASE_TOKEN)
+# db = client.get_database()
 
-books_collection = db["books"]
-authors_collection = db["authors"]
-genres_collection = db["genres"]
-subgenres_collection = db["subgenres"]
+# books_collection = db["books"]
+# authors_collection = db["authors"]
+# genres_collection = db["genres"]
 
-class Genre:
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
+# subgenres_collection = db["subgenres"]
 
-class Subgenre:
-    def __init__(self, name, description, parent_genre_id):
-        self.name = name
-        self.description = description
-        self.parent_genre_id = parent_genre_id
+class Genre(BaseModel):
+    name: str
+    description: str
 
-class Book:
-    def __init__(self, title, author_id, subgenre_id, year):
-        self.title = title
-        self.author_id = author_id
-        self.subgenre_id = subgenre_id
-        self.year = year
+class Subgenre(BaseModel):
+    name: str
+    description: str
+    parent_genre_id: str
 
-class Author:
-    def __init__(self, name, birth_year, nationality):
-        self.name = name
-        self.birth_year = birth_year
-        self.nationality = nationality
+class BookBase(BaseModel):
+    title: str
+    author_id: str
+    subgenre_id: str
+    year: int
+
+class BookCreate(BookBase):
+    pass
+
+class Book(BookBase):
+    id: str
+
+    class Config:
+        orm_mode = True
+
+class Author(BaseModel):
+    name: str
+    birth_year: int
+    nationality: str

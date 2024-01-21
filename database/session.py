@@ -1,7 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from config import DATABASE_URL
-SQLALCHEMY_DATABASE_URL = DATABASE_URL
+from motor.motor_asyncio import AsyncIOMotorClient
+from databases import Database
+from config import DATABASE_TOKEN
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+DATABASE_URL = DATABASE_TOKEN
+
+# Create the motor client
+client = AsyncIOMotorClient(DATABASE_URL)
+
+# Create the database instance
+database = Database(DATABASE_URL)
